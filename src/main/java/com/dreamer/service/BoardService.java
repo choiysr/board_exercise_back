@@ -1,0 +1,19 @@
+package com.dreamer.service;
+
+import java.util.List;
+
+import com.dreamer.domain.AuthCheck;
+import com.dreamer.domain.BoardVO;
+import com.dreamer.domain.Criteria;
+
+
+public interface BoardService {
+	
+	public BoardVO read(Integer bno);
+	public void write(BoardVO board);
+	public List<BoardVO> getBoardList(Criteria pageInfo);
+	public Integer countAllBoards();
+	public Integer authCheck(AuthCheck enteredInfo);
+	
+
+}

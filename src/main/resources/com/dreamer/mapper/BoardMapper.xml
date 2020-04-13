@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dreamer.mapper.BoardMapper">
+
+	<select id="selectOneByBno" resultType="com.dreamer.domain.BoardVO">
+		select * from tbl_board where bno = #{bno}
+	</select>
+
+	<insert id="insertBoard">
+		insert into tbl_board(writer, password, title, content)
+		values(#{writer},#{password},#{title},#{content})
+	</insert>
+
+	<select id="selectAllBoard" resultType="com.dreamer.domain.BoardVO">
+	select T1.* from (select * from tbl_board order by bno desc) T1 
+	limit #{pageRequest}, #{amount}
+	</select>
+	
+	<select id="countAllBoards" resultType="int">
+	select count(bno) from tbl_board where bno>0
+	</select>
+	
+	<select id="authCheck" resultType="int">
+	select IF(password = #{password},t1.bno,0) from tbl_board t1 where bno=#{bno};
+	</select>
+	
+	
+</mapper>
+
+

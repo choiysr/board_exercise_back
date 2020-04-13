@@ -1,0 +1,26 @@
+package com.dreamer.mapper;
+
+import java.util.List;
+
+import com.dreamer.domain.AuthCheck;
+import com.dreamer.domain.BoardVO;
+import com.dreamer.domain.Criteria;
+
+public interface BoardMapper {
+	
+	// to read  
+	public BoardVO selectOneByBno(Integer bno);
+	
+	// to create
+	public void insertBoard(BoardVO board);
+	
+	// to get list 
+	public List<BoardVO> selectAllBoard(Criteria pageInfo);
+	
+	// to count number of boards 
+	public Integer countAllBoards();
+	
+	// 수정/삭제시 비밀번호 확인
+	public Integer authCheck(AuthCheck enteredInfo);
+
+}
