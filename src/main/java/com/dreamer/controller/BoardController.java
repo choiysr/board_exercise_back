@@ -1,12 +1,12 @@
 package com.dreamer.controller;
 
-import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.OK;
 
 import java.util.List;
 
 import javax.validation.Valid;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
@@ -77,16 +77,9 @@ public class BoardController {
 	
 	@PostMapping(value = "/authcheck")
 	public ResponseEntity<ResponseMsg> checkPassword(@RequestBody AuthCheck enteredInfo) {
-		
-		log.info(enteredInfo.getBno());
-		log.info(enteredInfo.getPassword());
-		
-
-		
 		message.setMsgKey("result");
 		ResponseEntity<ResponseMsg> res;
 		if(!boardService.authCheck(enteredInfo).equals(enteredInfo.getBno())) {
-			log.info(boardService.authCheck(enteredInfo));
 			message.setMsgValue("FAIL");
 			res = new ResponseEntity<>(message,BAD_REQUEST);
 		} else {
