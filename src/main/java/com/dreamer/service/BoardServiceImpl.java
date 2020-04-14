@@ -7,21 +7,23 @@ import org.springframework.stereotype.Service;
 import com.dreamer.domain.AuthCheck;
 import com.dreamer.domain.BoardVO;
 import com.dreamer.domain.Criteria;
-import com.dreamer.domain.PageDTO;
 import com.dreamer.mapper.BoardMapper;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j;
 
 
 
 @RequiredArgsConstructor
 @Service
+@Log4j
 public class BoardServiceImpl implements BoardService {
 	
 	private final BoardMapper boardMapper;
 
 	@Override
 	public BoardVO read(Integer bno) {
+		boardMapper.increaseViews(bno);
 		return boardMapper.selectOneByBno(bno);
 	}
 
@@ -43,6 +45,16 @@ public class BoardServiceImpl implements BoardService {
 	@Override
 	public Integer authCheck(AuthCheck enteredInfo) {
 		return boardMapper.authCheck(enteredInfo);
+	}
+
+	@Override
+	public void update(BoardVO board) {
+		boardMapper.updateBoard(board);
+	}
+
+	@Override
+	public void delete(Integer bno) {
+		boardMapper.deleteBoard(bno);
 	}
 
 }

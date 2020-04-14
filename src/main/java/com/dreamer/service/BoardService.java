@@ -14,6 +14,8 @@ public interface BoardService {
 	public List<BoardVO> getBoardList(Criteria pageInfo);
 	public Integer countAllBoards();
 	public Integer authCheck(AuthCheck enteredInfo);
+	public void update(BoardVO board);
+	public void delete(Integer bno);
 	
 
 }

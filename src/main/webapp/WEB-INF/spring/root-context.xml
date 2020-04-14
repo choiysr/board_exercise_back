@@ -35,8 +35,7 @@
 	
 	<!-- service bean 설정 -->
 	<context:component-scan base-package="com.dreamer.service" />
-	
-	<context:component-scan base-package="com.dreamer.util" />
+
 
 
 </beans>

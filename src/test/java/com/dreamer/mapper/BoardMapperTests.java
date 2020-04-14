@@ -18,7 +18,6 @@ public class BoardMapperTests extends LoadingTests {
 
 	@Setter(onMethod_ = { @Autowired })
 	BoardMapper bmapper;
-	
 
 	@Test
 	public void selectBoardByBnoTest() {
@@ -29,15 +28,17 @@ public class BoardMapperTests extends LoadingTests {
 	@Test
 	public void insertBoardTest() {
 		log.info("===MapperTest : insertBoard===");
-		BoardVO board = BoardVO.builder().writer("writer_test").content("content_test").password("password").title("한글제목").build();
+		BoardVO board = BoardVO.builder().writer("writer_test").content("content_test").password("password")
+				.title("한글제목").build();
 		bmapper.insertBoard(board);
 	}
-	
+
 	@Test
 	public void insertDummies() {
 		log.info("=====insert dummy datas=====");
-		IntStream.range(104, 120).forEach(i->{
-			bmapper.insertBoard(BoardVO.builder().writer("writer"+i).content("content"+i).password("pw").title("타이틀"+i).build());
+		IntStream.range(104, 120).forEach(i -> {
+			bmapper.insertBoard(BoardVO.builder().writer("writer" + i).content("content" + i).password("pw")
+					.title("타이틀" + i).build());
 		});
 	}
 
@@ -46,29 +47,40 @@ public class BoardMapperTests extends LoadingTests {
 		log.info("===================MapperTest : selectAllBoardTest===");
 		log.info(bmapper.selectAllBoard(new Criteria(100, 10)));
 	}
-	
+
 	@Test
 	public void countAllBoardTest() {
 		log.info("===================MapperTest : countAllBoardTest===");
 		log.info(bmapper.countAllBoards());
 	}
-	
+
 	@Test
 	public void validationTest() {
 		// 안됨. 다시해볼것
 		log.info("VALIDATION TEST ===============");
 		try {
 			bmapper.insertBoard(BoardVO.builder().writer("1111").title("TITLE").password("1").content("hi").build());
-		}catch(Exception e) {
+		} catch (Exception e) {
 			log.info("ERROR!!!!!!!!!!!!!!!!!!!!!!");
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Test
 	public void authCheckTest() {
 		log.info(bmapper.authCheck(AuthCheck.builder().bno(215).password("125454534").build()));
-		
+
+	}
+
+	@Test
+	public void updateBoardTest() {
+//		Integer test = bmapper.updateBoard(BoardVO.builder().bno(null).title("변경1111111").content("변경").build());
+		// log.info(test);
+	}
+	
+	@Test
+	public void deleteBoardTest() {
+		bmapper.deleteBoard(220);
 	}
 
 }

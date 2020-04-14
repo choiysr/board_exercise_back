@@ -1,22 +1,16 @@
 package com.dreamer.util;
 
-import org.springframework.stereotype.Component;
-
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 
-@Component
-@AllArgsConstructor
-@Setter
 @Getter
 public class ResponseMsg {
 	
-	private String msgKey, msgValue;
-	
-	public ResponseMsg() {
-		this("status","success");
+	private StatusEnum status;
+	private String message;
+
+	public ResponseMsg(StatusEnum status, String message) {
+		this.status = status;
+		this.message = message;
 	}
 	
-
 }
