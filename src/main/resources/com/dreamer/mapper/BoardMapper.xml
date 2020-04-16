@@ -5,7 +5,28 @@
 
 <mapper namespace="com.dreamer.mapper.BoardMapper">
 
-	<select id="selectOneByBno" resultType="com.dreamer.domain.BoardVO">
+	<sql id="search">
+		<if test='keyword != null or keyword != ""'>
+		<where>
+			<foreach collection="category" item="option" separator="OR">
+				<if test='option == "T"'> title like concat('%',#{keyword},'%')</if>
+				<if test='option == "C"'> content like concat('%',#{keyword},'%')</if>
+				<if test='option == "W"'> writer like concat('%',#{keyword},'%')</if>
+			</foreach>
+		</where>
+		</if>
+	</sql>
+
+	<select id="selectAllBoard" resultType="com.dreamer.domain.BoardVO">
+		select * from tbl_board
+		<include refid="search"></include>
+		order by bno desc
+		limit #{pageRequest}, #{amount}
+	</select>
+
+
+	<select id="selectOneByBno"
+		resultType="com.dreamer.domain.BoardVO">
 		select * from tbl_board where bno = #{bno}
 	</select>
 
@@ -13,36 +34,36 @@
 		insert into tbl_board(writer, password, title, content)
 		values(#{writer},#{password},#{title},#{content})
 	</insert>
-	
-	
 
-	<select id="selectAllBoard" resultType="com.dreamer.domain.BoardVO">
-	select T1.* from (select * from tbl_board order by bno desc) T1 
-	limit #{pageRequest}, #{amount}
-	</select>
-	
+
+<!-- 	<select id="selectAllBoard"
+		resultType="com.dreamer.domain.BoardVO">
+		select * from tbl_board order by bno desc 
+		limit #{pageRequest}, #{amount}
+	</select> -->
+
 	<update id="increaseViews">
-	update tbl_board set views = views+1 where bno = #{bno}
+		update tbl_board set views = views+1 where bno = #{bno}
 	</update>
-	
-	<select id="countAllBoards" resultType="int">
-	select count(bno) from tbl_board where bno>0
-	</select>
-	
-	<select id="authCheck" resultType="int">
-	select IF(password = #{password},t1.bno,0) from tbl_board t1 where bno = #{bno}
-	</select>
-	
-	<update id="updateBoard">
-	update tbl_board set title = #{title}, content = #{content} where bno = #{bno}
-	</update>
-	
-	<delete id="deleteBoard">
-	delete from tbl_board where bno = #{bno}
-	</delete>
-	
 
-	
+	<select id="countAllBoards" resultType="int">
+		select count(bno) from tbl_board where bno>0
+	</select>
+
+	<select id="authCheck" resultType="int">
+		select IF(password = #{password},t1.bno,0) from tbl_board t1 where bno = #{bno}
+	</select>
+
+	<update id="updateBoard">
+		update tbl_board set title = #{title}, content = #{content} where bno = #{bno}
+	</update>
+
+	<delete id="deleteBoard">
+		delete from tbl_board where bno = #{bno}
+	</delete>
+
+
+
 </mapper>
 
 

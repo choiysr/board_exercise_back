@@ -32,6 +32,12 @@ public interface BoardMapper {
 	// 게시글 삭제
 	public void deleteBoard(Integer bno);
 	
+	// SEARCH TEST
+	public  List<BoardVO> searchTest(Criteria pageInfo);
+	
+	// SEARCH TEST
+	public  List<BoardVO> searchTest2(Criteria pageInfo);
+	
 
 
 }

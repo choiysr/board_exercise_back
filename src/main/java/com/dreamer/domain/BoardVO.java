@@ -28,6 +28,6 @@ public class BoardVO implements Pageable {
 	@Size(min=4, max=12,message="비밀번호는 4자 이상 12자 미만으로 설정하세요.")
 	private String password;
 
-	private LocalDateTime regdate, updateddatd;
+	private LocalDateTime regdate, updateddate;
 
 }

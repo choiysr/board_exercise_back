@@ -1,5 +1,6 @@
 package com.dreamer.mapper;
 
+import java.util.List;
 import java.util.stream.IntStream;
 
 import org.junit.Test;
@@ -45,7 +46,7 @@ public class BoardMapperTests extends LoadingTests {
 	@Test
 	public void selectAllBoardWithPagingTest() {
 		log.info("===================MapperTest : selectAllBoardTest===");
-		log.info(bmapper.selectAllBoard(new Criteria(100, 10)));
+//		log.info(bmapper.selectAllBoard(new Criteria(100, 10)));
 	}
 
 	@Test
@@ -81,6 +82,33 @@ public class BoardMapperTests extends LoadingTests {
 	@Test
 	public void deleteBoardTest() {
 		bmapper.deleteBoard(220);
+	}
+	
+	@Test
+	public void searchTest() {
+//		Criteria cri = new Criteria(1, 5, "W", "z");
+//		List<BoardVO> list = bmapper.searchTest(cri);
+//		list.forEach(board -> {
+//			log.info(board);
+//		});
+//		
+//		log.info("=============");
+//		
+//		Criteria cri2 = new Criteria(1, 5, "TC", "하");
+//		List<BoardVO> list2 = bmapper.searchTest(cri2);
+//		list2.forEach(board -> {
+//			log.info(board);
+//		});
+//		
+//		
+		
+		log.info("===========================");
+		Criteria cri3 = new Criteria(1, 5, "CW", "테스트");
+		List<BoardVO> list3 = bmapper.selectAllBoard(cri3);
+		list3.forEach(board -> {
+			log.info(board);
+		});
+		
 	}
 
 }
