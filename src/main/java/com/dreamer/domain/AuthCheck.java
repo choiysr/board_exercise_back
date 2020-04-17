@@ -15,6 +15,11 @@ public class AuthCheck {
 	
 	private Integer bno;
 	private String password;
+	private String type;
+	
+	public Integer getRno() {
+		return this.bno;
+	}
 	
 
 }

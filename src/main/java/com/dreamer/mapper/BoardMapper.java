@@ -5,6 +5,7 @@ import java.util.List;
 import com.dreamer.domain.AuthCheck;
 import com.dreamer.domain.BoardVO;
 import com.dreamer.domain.Criteria;
+import com.dreamer.domain.ReplyVO;
 
 public interface BoardMapper {
 	
@@ -21,7 +22,7 @@ public interface BoardMapper {
 	public List<BoardVO> selectAllBoard(Criteria pageInfo);
 	
 	// to count number of boards 
-	public Integer countAllBoards();
+	public Integer countAllBoards(Criteria pageInfo);
 	
 	// 수정/삭제시 비밀번호 확인
 	public Integer authCheck(AuthCheck enteredInfo);
@@ -30,14 +31,7 @@ public interface BoardMapper {
 	public void updateBoard(BoardVO board);
 	
 	// 게시글 삭제
-	public void deleteBoard(Integer bno);
-	
-	// SEARCH TEST
-	public  List<BoardVO> searchTest(Criteria pageInfo);
-	
-	// SEARCH TEST
-	public  List<BoardVO> searchTest2(Criteria pageInfo);
-	
+	public void deleteBoard(Integer bno);		
 
 
 }

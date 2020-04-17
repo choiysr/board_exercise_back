@@ -1,8 +1,8 @@
 package com.dreamer.domain;
 
-import lombok.Getter;
+import lombok.Data;
 
-@Getter
+@Data
 public class Criteria {
 
 	private Integer pageRequest;

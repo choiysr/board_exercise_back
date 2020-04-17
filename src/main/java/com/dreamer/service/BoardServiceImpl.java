@@ -38,8 +38,8 @@ public class BoardServiceImpl implements BoardService {
 	}
 
 	@Override
-	public Integer countAllBoards() {
-		return boardMapper.countAllBoards();
+	public Integer countAllBoards(Criteria pageInfo) {
+		return boardMapper.countAllBoards(pageInfo);
 	}
 
 	@Override

@@ -16,18 +16,16 @@ import lombok.ToString;
 @NoArgsConstructor
 @Getter
 @ToString
-public class BoardVO implements Pageable{
+public class ReplyVO implements Pageable {
 	
-	private Integer bno, views, rcount;
-	@NotBlank(message = "제목을 입력하세요.")
-	private String title;
+	private Integer rno;
+	private Integer boardno;
 	@NotBlank(message = "작성자를 입력하세요.")
 	private String writer;
 	@NotBlank(message = "내용을 입력하세요.")
 	private String content;
 	@Size(min=4, max=12,message="비밀번호는 4자 이상 12자 미만으로 설정하세요.")
 	private String password;
-	
 
 	private LocalDateTime regdate, updateddate;
 

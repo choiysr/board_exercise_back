@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.dreamer.domain.AuthCheck;
 import com.dreamer.domain.BoardVO;
 import com.dreamer.domain.Criteria;
+import com.dreamer.domain.ReplyVO;
 import com.dreamer.loading.LoadingTests;
 
 import lombok.Setter;
@@ -19,6 +20,10 @@ public class BoardMapperTests extends LoadingTests {
 
 	@Setter(onMethod_ = { @Autowired })
 	BoardMapper bmapper;
+	
+	@Setter(onMethod_ = { @Autowired })
+	ReplyMapper rmapper;
+
 
 	@Test
 	public void selectBoardByBnoTest() {
@@ -36,11 +41,11 @@ public class BoardMapperTests extends LoadingTests {
 
 	@Test
 	public void insertDummies() {
-		log.info("=====insert dummy datas=====");
-		IntStream.range(104, 120).forEach(i -> {
-			bmapper.insertBoard(BoardVO.builder().writer("writer" + i).content("content" + i).password("pw")
-					.title("타이틀" + i).build());
-		});
+//		log.info("=====insert dummy datas=====");
+//		IntStream.range(104, 120).forEach(i -> {
+//			bmapper.insertBoard(BoardVO.builder().writer("writer" + i).content("content" + i).password("pw")
+//					.title("타이틀" + i).build());
+//		});
 	}
 
 	@Test
@@ -52,7 +57,8 @@ public class BoardMapperTests extends LoadingTests {
 	@Test
 	public void countAllBoardTest() {
 		log.info("===================MapperTest : countAllBoardTest===");
-		log.info(bmapper.countAllBoards());
+		Criteria cri3 = new Criteria(1, 10, "TCW", "z");
+		log.info(bmapper.countAllBoards(cri3));
 	}
 
 	@Test
@@ -103,12 +109,33 @@ public class BoardMapperTests extends LoadingTests {
 //		
 		
 		log.info("===========================");
-		Criteria cri3 = new Criteria(1, 5, "CW", "테스트");
+		Criteria cri3 = new Criteria(1, 5, "CW", "z");
 		List<BoardVO> list3 = bmapper.selectAllBoard(cri3);
 		list3.forEach(board -> {
 			log.info(board);
 		});
+	}
+	
+	
+	@Test
+	public void replyCountTest() {
+		Criteria cri3 = new Criteria(1, 10, "", "");
+		//List<BoardVO> list3 = bmapper.allTest(cri3);
+//		list3.forEach(board -> {
+//			log.info(board);
+//		});
+	}
+	
+	@Test
+	public void replyInsertTest() {
+		rmapper.insertReply(ReplyVO.builder().boardno(352).content("zzzzz").writer("wrrrrrr").password("1234").build());
 		
+	}
+	
+	@Test
+	public void readBoardwithoutReply() {
+		log.info(bmapper.selectOneByBno(350));
+
 	}
 
 }
