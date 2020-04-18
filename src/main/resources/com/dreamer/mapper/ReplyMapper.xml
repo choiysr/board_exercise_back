@@ -10,6 +10,11 @@
 		where boardno = #{bno}
 		order by rno desc
 	</select>
+	
+	<select id="selectOneByRno" resultType="com.dreamer.domain.ReplyVO">
+		select * from tbl_reply
+		where rno = #{rno}
+	</select>
 
 	<insert id="insertReply">
 		insert into tbl_reply(writer, password, content, boardno)
@@ -19,7 +24,14 @@
 	<select id="authCheck" resultType="int">
 		select IF(password = #{password},t1.rno,0) from tbl_reply t1 where rno = #{rno}
 	</select>
-
+	
+	<delete id="deleteReply">
+		delete from tbl_reply where rno = #{rno}
+	</delete>
+	
+	<update id="updateReply">
+		update tbl_reply set content = #{content} where rno = #{rno}
+	</update>
 
 </mapper>
 
