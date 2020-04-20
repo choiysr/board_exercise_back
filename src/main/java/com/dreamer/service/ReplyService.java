@@ -3,6 +3,8 @@ package com.dreamer.service;
 import java.util.List;
 
 import com.dreamer.domain.AuthCheck;
+
+import com.dreamer.domain.BoardVO;
 import com.dreamer.domain.ReplyVO;
 
 public interface ReplyService {

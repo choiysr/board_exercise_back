@@ -192,6 +192,7 @@ public class BoardController {
 		return result;
 	}
 
+
 	// 유효성 검사(게시글 등록, 수정시 사용)
 	public ResponseEntity<ResponseMsg> validationCheck(BindingResult validationInfo) {
 		String errorMessage = validationInfo.getAllErrors().get(0).toString();
@@ -200,5 +201,4 @@ public class BoardController {
 		log.info(errorMessage);
 		return new ResponseEntity<>(new ResponseMsg(StatusEnum.FAIL, errorMessage), UNPROCESSABLE_ENTITY);
 	}
-
 }

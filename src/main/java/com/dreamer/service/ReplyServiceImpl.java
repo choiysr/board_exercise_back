@@ -52,4 +52,5 @@ public class ReplyServiceImpl implements ReplyService{
 		return replyMapper.selectOneByRno(rno);
 	}
 
+
 }

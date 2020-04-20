@@ -33,7 +33,7 @@
 		left join (select boardno, count(rno) as rcount from tbl_reply
 		group by boardno) as rt
 		on rt.boardno = bt.bno
-		where bno=#{bno};
+		where bno=#{bno}
 	</select>
 
 	<insert id="insertBoard">
