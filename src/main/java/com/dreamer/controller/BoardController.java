@@ -5,12 +5,18 @@ import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 
+import java.io.File;
+import java.nio.file.Files;
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.dreamer.domain.AuthCheck;
 import com.dreamer.domain.BoardVO;
@@ -28,6 +35,7 @@ import com.dreamer.domain.PageDTO;
 import com.dreamer.domain.ReplyVO;
 import com.dreamer.service.BoardService;
 import com.dreamer.service.ReplyService;
+import com.dreamer.util.FileUtil;
 import com.dreamer.util.ResponseMsg;
 import com.dreamer.util.StatusEnum;
 
@@ -38,16 +46,16 @@ import lombok.extern.log4j.Log4j;
 @RequestMapping("/*")
 @RequiredArgsConstructor
 @Log4j
+@CrossOrigin
 public class BoardController {
 
 	private final BoardService boardService;
 	private final ReplyService replyService;
 
-	// 게시글 리스트 불러오기 
-	// @modelattribute로 테스트해보기. 
+	// 게시글 리스트 불러오기
+	// @modelattribute로 테스트해보기.
 	@GetMapping(value = "/list")
-	public ResponseEntity<PageDTO<BoardVO>> getAllList(
-			@RequestParam("pageRequest") Integer pageRequest,
+	public ResponseEntity<PageDTO<BoardVO>> getAllList(@RequestParam("pageRequest") Integer pageRequest,
 			@RequestParam("amount") Integer amount,
 			@RequestParam(value = "searchOption", defaultValue = "") String searchOption,
 			@RequestParam(value = "keyword", defaultValue = "") String keyword) {
@@ -59,11 +67,11 @@ public class BoardController {
 	}
 
 	// 게시글 등록
-	// Validation 검사 
+	// Validation 검사
 	@PostMapping(value = "/board")
 	public ResponseEntity<ResponseMsg> registerBoard(@RequestBody @Valid BoardVO board, BindingResult validationInfo) {
-		ResponseEntity<ResponseMsg> response; 
-		if(validationInfo.hasErrors()) {
+		ResponseEntity<ResponseMsg> response;
+		if (validationInfo.hasErrors()) {
 			response = validationCheck(validationInfo);
 		} else {
 			boardService.write(board);
@@ -72,88 +80,125 @@ public class BoardController {
 		return response;
 	}
 
-	// 게시글 읽기 
+	// 게시글 읽기
 	@GetMapping(value = "/board/{bno}")
 	public ResponseEntity<BoardVO> getOneBoard(@PathVariable Integer bno) {
-		log.info(boardService.read(bno));
+		log.info("read실행확인=======");
 		return new ResponseEntity<>(boardService.read(bno), OK);
 	}
-	
-	// 게시글 수정 
-	@PutMapping(value ="/board")
+
+	// 게시글 수정
+	@PutMapping(value = "/board")
 	public ResponseEntity<ResponseMsg> updateBoard(@RequestBody @Valid BoardVO board, BindingResult validationInfo) {
-		ResponseEntity<ResponseMsg> response; 
-		if(validationInfo.hasErrors()) {
+		ResponseEntity<ResponseMsg> response;
+		if (validationInfo.hasErrors()) {
 			response = validationCheck(validationInfo);
-		}  else {
+		} else {
 			boardService.update(board);
 			response = new ResponseEntity<>(new ResponseMsg(StatusEnum.SUCCESS, "성공"), CREATED);
-		}		
+		}
 		return response;
 	}
-	
-	// 게시글 삭제 
+
+	// 게시글 삭제
 	@DeleteMapping(value = "board/{bno}")
-	public  ResponseEntity<ResponseMsg> deleteBoard(@PathVariable Integer bno) {
+	public ResponseEntity<ResponseMsg> deleteBoard(@PathVariable Integer bno) {
 		boardService.delete(bno);
-		return new ResponseEntity<>(new ResponseMsg(StatusEnum.SUCCESS, "성공"), OK);		
-	}	
-	
-	// 댓글 가져오기 
-	@GetMapping(value ="/reply/{bno}")
+		return new ResponseEntity<>(new ResponseMsg(StatusEnum.SUCCESS, "성공"), OK);
+	}
+
+	// 댓글 리스트 가져오기
+	@GetMapping(value = "/reply/{bno}")
 	public ResponseEntity<List<ReplyVO>> getReplies(@PathVariable Integer bno) {
 		return new ResponseEntity<>(replyService.getReplyList(bno), OK);
 	}
-	
-	// 댓글 등록		
-	// Validation 검사 
+
+	// 댓글 등록
 	@PostMapping(value = "/reply")
 	public ResponseEntity<ResponseMsg> registerReply(@RequestBody @Valid ReplyVO reply, BindingResult validationInfo) {
-		ResponseEntity<ResponseMsg> response; 
-		log.info(reply);
-		log.info("=====what is reply");
-		if(validationInfo.hasErrors()) {
+		ResponseEntity<ResponseMsg> response;
+		if (validationInfo.hasErrors()) {
 			response = validationCheck(validationInfo);
-		}  else {
+		} else {
 			replyService.write(reply);
 			response = new ResponseEntity<>(new ResponseMsg(StatusEnum.SUCCESS, "성공"), CREATED);
-		}		
+		}
 		return response;
 	}
 	
-	// 댓글 삭제
-	@DeleteMapping(value ="/reply")
-	public  ResponseEntity<ResponseMsg> deleteReply(@PathVariable Integer rno) {
-		replyService.delete(rno);
-		return new ResponseEntity<>(new ResponseMsg(StatusEnum.SUCCESS, "성공"), OK);		
-	}	
-	
-	
-
-	// 수정/삭제시 비밀번호 체크 
-	@PostMapping(value = "/authcheck")
-	public ResponseEntity<ResponseMsg> checkPassword(@RequestBody AuthCheck enteredInfo) {
-		if(enteredInfo.getType().equals("board")) {
-			ResponseEntity<ResponseMsg> response = boardService.authCheck(enteredInfo).equals(enteredInfo.getBno())
-					? new ResponseEntity<>(new ResponseMsg(StatusEnum.SUCCESS, "성공"), OK)
-					: new ResponseEntity<>(new ResponseMsg(StatusEnum.FAIL, "비밀번호가 틀립니다. 다시 입력해주세요"), UNAUTHORIZED);
-			return response;
+	// 댓글 수정
+	@PutMapping(value = "/reply")
+	public ResponseEntity<ResponseMsg> updateReply(@RequestBody @Valid ReplyVO reply, BindingResult validationInfo) {
+		ResponseEntity<ResponseMsg> response;
+		if (validationInfo.hasErrors()) {
+			response = validationCheck(validationInfo);
+		} else {
+			replyService.update(reply);
+			response = new ResponseEntity<>(new ResponseMsg(StatusEnum.SUCCESS, "성공"), CREATED);
 		}
-		return null;
+		return response;
+	}
+	
+	// 댓글 수정을 위한 댓글 가져오기 
+	// 댓글 가져오기
+	@GetMapping(value = "/reply/forUpdate/{rno}")
+	public ResponseEntity<ReplyVO> getOneReply(@PathVariable Integer rno) {
+		return new ResponseEntity<>(replyService.read(rno), OK);
 	}
 	
 
-		
+	// 댓글 삭제
+	@DeleteMapping(value = "/reply/{rno}")
+	public ResponseEntity<ResponseMsg> deleteReply(@PathVariable Integer rno) {
+		replyService.delete(rno);
+		return new ResponseEntity<>(new ResponseMsg(StatusEnum.SUCCESS, "성공"), OK);
+	}
+
+	// 수정/삭제시 비밀번호 체크
+	@PostMapping(value = "/authcheck")
+	public ResponseEntity<ResponseMsg> checkPassword(@RequestBody AuthCheck enteredInfo) {
+		boolean check;
+		ResponseEntity<ResponseMsg> response;
+		if (enteredInfo.getType().equals("board")) {
+			check = boardService.authCheck(enteredInfo).equals(enteredInfo.getBno());
+		} else {
+			check = replyService.authCheck(enteredInfo).equals(enteredInfo.getRno());
+		}
+		response = check ? 
+				new ResponseEntity<>(new ResponseMsg(StatusEnum.SUCCESS, "성공"), OK)
+				: new ResponseEntity<>(new ResponseMsg(StatusEnum.FAIL, "비밀번호가 틀립니다. 다시 입력해주세요"), UNAUTHORIZED);
+		return response;
+	}
+	
+	// 파일 업로드
+	@PostMapping(value = "/saveFile")
+	public ResponseEntity<List<Map<String,String>>> uploadFile(MultipartFile[] uploadFile) {
+		log.info("in saveFile CONTROLLER=======");
+		return new ResponseEntity<>(FileUtil.saveFile(uploadFile),OK);
+	}
+	
+	// 파일 display(이미지 파일 경로를 받고 해당 이미지를 return)
+	@GetMapping(value = "/display")
+	public ResponseEntity<byte[]> displayImage(@RequestParam String fileName) {
+		File file = new File("C:\\upload\\"+fileName);
+		ResponseEntity<byte[]> result = null;
+		try {
+			HttpHeaders header = new HttpHeaders();
+			header.add("Content-Type", Files.probeContentType(file.toPath()));
+			result = new ResponseEntity<>(FileCopyUtils.copyToByteArray(file),header,OK);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+
 	// 유효성 검사(게시글 등록, 수정시 사용)
 	public ResponseEntity<ResponseMsg> validationCheck(BindingResult validationInfo) {
 		String errorMessage = validationInfo.getAllErrors().get(0).toString();
-		errorMessage = errorMessage
-					   .substring(errorMessage.lastIndexOf("message") + 9, errorMessage.length())
-					   .replace("]", "").trim();
+		errorMessage = errorMessage.substring(errorMessage.lastIndexOf("message") + 9, errorMessage.length())
+				.replace("]", "").trim();
 		log.info(errorMessage);
 		return new ResponseEntity<>(new ResponseMsg(StatusEnum.FAIL, errorMessage), UNPROCESSABLE_ENTITY);
 	}
-	
-
 
 }

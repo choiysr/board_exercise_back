@@ -3,10 +3,12 @@ package com.dreamer.service;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.dreamer.domain.AuthCheck;
 import com.dreamer.domain.BoardVO;
 import com.dreamer.domain.Criteria;
+import com.dreamer.mapper.AttachmentMapper;
 import com.dreamer.mapper.BoardMapper;
 
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,7 @@ import lombok.extern.log4j.Log4j;
 public class BoardServiceImpl implements BoardService {
 	
 	private final BoardMapper boardMapper;
+	private final AttachmentMapper attachmentMapper;
 
 	@Override
 	public BoardVO read(Integer bno) {
@@ -28,8 +31,10 @@ public class BoardServiceImpl implements BoardService {
 	}
 
 	@Override
+	@Transactional
 	public void write(BoardVO board) {
 		boardMapper.insertBoard(board);
+		board.getAttachedList().forEach(attachmentMapper::insertAttachments);
 	}
 
 	@Override

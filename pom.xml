@@ -152,7 +152,7 @@
 			<version>2.10.3</version>
 		</dependency>
 
-		<!-- for using vaild annotation -->
+		<!-- for using vaildiation check -->
 		<!-- https://mvnrepository.com/artifact/javax.validation/validation-api -->
 		<dependency>
 			<groupId>javax.validation</groupId>
@@ -164,6 +164,14 @@
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-validator</artifactId>
 			<version>6.1.0.Final</version>
+		</dependency>
+
+
+		<!-- https://mvnrepository.com/artifact/net.coobird/thumbnailator -->
+		<dependency>
+			<groupId>net.coobird</groupId>
+			<artifactId>thumbnailator</artifactId>
+			<version>0.4.8</version>
 		</dependency>
 
 

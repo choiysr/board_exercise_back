@@ -1,6 +1,7 @@
 package com.dreamer.domain;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -29,6 +30,7 @@ public class BoardVO implements Pageable{
 	private String password;
 	
 
+	private List<AttachmentVO> attachedList;
 	private LocalDateTime regdate, updateddate;
 
 }
