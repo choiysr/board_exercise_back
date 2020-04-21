@@ -17,6 +17,7 @@ public interface BoardService {
 	public Integer authCheck(AuthCheck enteredInfo);
 	public void update(BoardVO board);
 	public void delete(Integer bno);
+	public String getOriginalFileName(String wholeFileName);
 
 
 	

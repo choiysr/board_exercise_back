@@ -6,13 +6,17 @@ import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
 
 import javax.validation.Valid;
 
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.validation.BindingResult;
@@ -83,7 +87,6 @@ public class BoardController {
 	// 게시글 읽기
 	@GetMapping(value = "/board/{bno}")
 	public ResponseEntity<BoardVO> getOneBoard(@PathVariable Integer bno) {
-		log.info("read실행확인=======");
 		return new ResponseEntity<>(boardService.read(bno), OK);
 	}
 
@@ -180,6 +183,8 @@ public class BoardController {
 	// 파일 display(이미지 파일 경로를 받고 해당 이미지를 return)
 	@GetMapping(value = "/display")
 	public ResponseEntity<byte[]> displayImage(@RequestParam String fileName) {
+		log.info("DISPLAY");
+		log.info(fileName);
 		File file = new File("C:\\upload\\"+fileName);
 		ResponseEntity<byte[]> result = null;
 		try {
@@ -190,6 +195,25 @@ public class BoardController {
 			e.printStackTrace();
 		}
 		return result;
+	}
+	
+	@GetMapping(value= "/download", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+	public ResponseEntity<Resource> download(@RequestParam String wholeFileName) {
+		log.info("DOWNLOAD!!!!!!!!!!!");
+		log.info(wholeFileName);
+		String fileNameFixed = wholeFileName.substring(wholeFileName.lastIndexOf("/")+1, wholeFileName.length());
+		log.info(fileNameFixed);
+		Resource resource = new FileSystemResource("c:\\upload\\"+wholeFileName);
+		log.info(boardService.getOriginalFileName(fileNameFixed));
+		String resourceName = boardService.getOriginalFileName(fileNameFixed);
+		HttpHeaders headers = new HttpHeaders();
+		try {
+			headers.add("Content-Disposition", "attachment; filename=" + new String(resourceName.getBytes("UTF-8"), "ISO-8859-1"));
+		} catch(UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		log.info("RESOURCE : "+resource);
+		return new ResponseEntity<>(resource, headers, OK);
 	}
 
 

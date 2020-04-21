@@ -12,28 +12,33 @@ import com.dreamer.mapper.AttachmentMapper;
 import com.dreamer.mapper.BoardMapper;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j;
 
 
 
 @RequiredArgsConstructor
 @Service
-@Log4j
 public class BoardServiceImpl implements BoardService {
 	
 	private final BoardMapper boardMapper;
 	private final AttachmentMapper attachmentMapper;
 
 	@Override
+	@Transactional
 	public BoardVO read(Integer bno) {
 		boardMapper.increaseViews(bno);
-		return boardMapper.selectOneByBno(bno);
+		BoardVO board = boardMapper.selectOneByBno(bno);
+		board.setAttachedList(attachmentMapper.selectAttachmentsByBno(bno));
+		return board;
 	}
 
 	@Override
 	@Transactional
 	public void write(BoardVO board) {
 		boardMapper.insertBoard(board);
+		Integer bno = attachmentMapper.getCurrentBno();
+		board.getAttachedList().forEach(attachment -> {
+			attachment.setBoardno(bno);
+		});
 		board.getAttachedList().forEach(attachmentMapper::insertAttachments);
 	}
 
@@ -53,13 +58,24 @@ public class BoardServiceImpl implements BoardService {
 	}
 
 	@Override
+	@Transactional
 	public void update(BoardVO board) {
+		attachmentMapper.deleteAttachments(board.getBno());
+		board.getAttachedList().forEach(attachment -> {
+			attachment.setBoardno(board.getBno());
+		});
+		board.getAttachedList().forEach(attachmentMapper::insertAttachments);
 		boardMapper.updateBoard(board);
 	}
 
 	@Override
 	public void delete(Integer bno) {
 		boardMapper.deleteBoard(bno);
+	}
+
+	@Override
+	public String getOriginalFileName(String wholeFileName) {
+		return attachmentMapper.getOriginalFileName(wholeFileName);
 	}
 
 }

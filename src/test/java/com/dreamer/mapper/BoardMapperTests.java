@@ -1,7 +1,6 @@
 package com.dreamer.mapper;
 
 import java.util.List;
-import java.util.stream.IntStream;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +22,9 @@ public class BoardMapperTests extends LoadingTests {
 	
 	@Setter(onMethod_ = { @Autowired })
 	ReplyMapper rmapper;
+	
+	@Setter(onMethod_ = {@Autowired})
+	AttachmentMapper amapper;
 
 
 	@Test
@@ -135,7 +137,19 @@ public class BoardMapperTests extends LoadingTests {
 	@Test
 	public void readBoardwithoutReply() {
 		log.info(bmapper.selectOneByBno(350));
-
+	}
+	
+	@Test
+	public void getAttachmentListTest() {
+		BoardVO board = bmapper.selectOneByBno(357);
+		board.setAttachedList(amapper.selectAttachmentsByBno(357));
+		log.info(board);
+	}
+	
+	@Test
+	public void getOriginalFileNameTest() {
+		String result = amapper.getOriginalFileName("8336a6f9-c6ca-4029-a4fc-7b36a6bd28d3222.pdf");
+		log.info(result);
 	}
 
 }
