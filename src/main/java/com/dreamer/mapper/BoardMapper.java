@@ -25,7 +25,7 @@ public interface BoardMapper {
 	public Integer countAllBoards(Criteria pageInfo);
 	
 	// 수정/삭제시 비밀번호 확인
-	public Integer authCheck(AuthCheck enteredInfo);
+	public String authCheck(AuthCheck enteredInfo);
 	
 	// 게시글 수정
 	public void updateBoard(BoardVO board);

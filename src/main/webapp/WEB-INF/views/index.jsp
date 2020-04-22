@@ -123,7 +123,7 @@
                                     <button class="btn btn-outline-primary ns" id="searchBtn" type="button">검색
                                     </button>
                                     <button class="btn btn-outline-secondary ns" id="searchCancleBtn" type="button">
-                                        검색조건해제
+                                        	검색조건해제
                                     </button>
                                 </form>
                                 <table id="zero_config" class="table table-striped table-bordered no-wrap ns">
@@ -255,7 +255,7 @@
                         <div class="modal-footer">
                             <button type="button" class="btn btn-primary" id="readModal-updateBtn"
                                     style="display: none">
-                                수정완료
+                               		 수정완료
                             </button>
                             <button type="button" class="btn btn-primary" id="readModal-modiBtn">수정</button>
                             <button type="button" class="btn btn-danger" id="readModal-deleteBtn">삭제</button>
@@ -286,13 +286,11 @@
                             <table id="replyTable">
                             </table>
                         </div>
-
                     </div>
-
-
                 </div>
             </div>
         </div>
+      </div>
         <!-- end of 조회/수정/삭제 modal-->
 
 
@@ -345,9 +343,13 @@
             var staticSelectedReply;
             var items;
             var finalFileFormData = new Array();
+            var $uploadDiv = $(".uploadDiv");
+            var $cloneObj =  $uploadDiv.clone();
+            var $uploadDivforModi = $(".uploadDivforModi");
+            var $cloneObjforModi = $uploadDivforModi.clone();
 
 
-            // tag maker - 게시글들
+            // tag maker - 게시글 리스트를 만듦. 
             function makeBoardListTag(data) {
                 let tagString = '';
                 // 등록일 월도,시간 한자릿수 계산해서 0 추가해주기
@@ -365,7 +367,7 @@
                 return tagString;
             }
 
-            // tag maker - 페이지 li태그
+            // tag maker - 페이지li태그를 만듦. 
             function makeBoardPageliTag(data) {
                 let tagString = '<li class="page-item" id="zero_config_previous">';
                 tagString += '<a href="#" aria-controls="zero_config" class="page-link" onclick="movePage(\'prev\')"><</a></li>';
@@ -379,7 +381,7 @@
                 return tagString;
             }
 
-            // tag maker - 댓글리스트
+            // tag maker - 글 조회시 댓글 tag 만듦.
             function makeReplyListTag(data) {
                 let tagString = '<tr><th id="replyWriterTD">작성자</th><th id="replyContentTD">내용</th><th id="replyDateTD">날짜</th><th id="replyButtonTD">수정/삭제</th></tr>';
                 data.forEach(reply => {
@@ -391,11 +393,30 @@
                 return tagString;
             }
 
+            // 파일 유효성 검사 
+            function validateFile(fileName, fileSize) {
+                var regex = new RegExp("(.*?)\.(exe|jsp|js|css|html)$");
+                var spcCheck = /[~!@#$%^&*()+|<>?:{}]/;
+                var maxSize = 20971520;
+                if (fileSize > maxSize) {
+                    alert("업로드 가능한 파일 크기를 초과했습니다.")
+                    return false;
+                };
+                if (regex.test(fileName)) {
+                    alert("exe,jsp,js,css,html 파일은 업로드 할 수 없습니다.")
+                    return false;
+                };
+                if(spcCheck.test(fileName)){
+                    alert("파일명에 허용되지 않는 특수문자가 있습니다.")
+                    return false;
+                }
+                return true;
+            }
+
 
             // 하단의 페이지 리스트 클릭시 해당 페이지의 글 목록을 가져오고 페이지 리스트를 재조정하는 function
             // === 수정 필요
-            // 1. 페이지가 10페이지 이상이 넘겨지지 않으면(이전과 li생김새에 변함이 없으면) 리스트 다시 만들 필요 없음.
-            // 2. prev, next버튼 활성/바활성 조정은 이전 상태와 true false를 비교하여 조정할것
+            // 페이지가 10페이지 이상이 넘겨지지 않으면(이전과 li생김새에 변함이 없으면) 리스트 다시 만들 필요 없음.
             function movePage(pageNum, option, searchKeyword) {
                 let currentPage = pageNum;
                 let searchOption;
@@ -443,7 +464,7 @@
                     }
 
                     if (data.prev == false) {
-                        // 여기서 왜 아래 jquery 객체를 쓸 수 없는지.. 나중에 수정할것
+                        // 여기서 왜 jquery 객체 안써지는지..??? 나중에 수정할것
                         // items.$prevBtn.addClass('disabled')
                         $("#zero_config_previous").addClass('disabled')
                     }
@@ -482,7 +503,7 @@
                 }
             }
 
-            // 유효한 read만 조회수 올리게 수정할것=================================================================
+            // read()호출시 마다 조회수 카운팅됨. service수정하던지 어쩌던지 유효한 read만 카운팅되도록 수정할것. 
             function read(bno) {
                 console.log("read실행")
                 console.log(bno)
@@ -588,6 +609,7 @@
             }
 
             // 댓글 삭제
+            // 비밀번호 fail시 재귀. -> prompt창 password형식으로 바꾸고 버튼이벤트 캐치하는걸로 수정할것(틀릴시 prompt창 안닫히게)
             function deleteReply(rno) {
                 console.log(rno)
                 let replyPasswordInput = prompt('비밀번호를 입력하세요.')
@@ -596,6 +618,7 @@
                 if (replyPasswordInput == null) {
                     return
                 }
+                
                 let rnoAndPassword = {
                     'bno': rno,
                     'password': replyPasswordInput,
@@ -625,6 +648,7 @@
             }
 
             // 댓글 수정
+            // 비밀번호 fail시 재귀. -> prompt창 password형식으로 바꾸고 버튼이벤트 캐치하는걸로 수정할것(틀릴시 prompt창 안닫히게)
             function modifyReply(rno) {
                 let replyPasswordInput = prompt('비밀번호를 입력하세요.')
 
@@ -664,11 +688,8 @@
 
             // 게시글 등록창에서 파일을 삭제한경우
             function deleteFileTag(targetFile) {
-                console.log("클릭!!")
                 finalFileFormData.forEach(function(item, index) {
-                    console.log("====타겟파일")
                     console.log(targetFile)
-                    console.log("====uuid+name")
                     console.log(item.uuid+item.name)
                   if(item.uuid+item.name == targetFile) {
                       finalFileFormData.splice(index,1);
@@ -680,8 +701,6 @@
 
             $(document).ready(() => {
 
-                console.log("dom loading is done")
-                // 처음 page 로딩시 1페이지를 보여줌.
                 items = item();
                 firstLoading();
 
@@ -697,6 +716,7 @@
                         alert("글 등록이 완료되었습니다.")
                         finalFileFormData = new Array();
                         movePage(1);
+                        $uploadDiv.html($cloneObj.html());
                     }
 
                     function fail(data) {
@@ -704,12 +724,6 @@
                     }
                 })
 
-                // [READ] 글 목록의 게시글 클릭시 Event > 왜 jQuery 동작 안하냐...  > onclick()으로 갈음. 수정할것
-                // $('.eachBoard').on('click',function(e) {
-                //     e.preventDefault();
-                //     console.log("꺄아~~!")
-                //     console.log(this)
-                // });
 
                 // 조회화면의 수정버튼 이벤트 > 클릭 시 비밀번호 입력 모달을 띄움
                 items.$modiBtnInReadModal.on('click', () => {
@@ -811,6 +825,7 @@
                             alert("글 수정이 완료되었습니다.")
                             allFormsReset();
                             read(staticSelectedBoard);
+                            $uploadDivforModi.html($cloneObjforModi.html());
                         }
 
                         function fail(data) {
@@ -878,12 +893,11 @@
                     let formData = new FormData();
                     let $inputFile = $(e.target);
                     let files = $inputFile[0].files;
-                    console.log(files)
                     for(let i=0;i<files.length;i++) {
                         // 기존이랑 같은파일 첨부하면 에러띄우기(==========추가할것)
-                        // 파일 확장자 체크해서 exe 등 첨부 못하게
-                        formData.append("uploadFile",files[i]);
-                        //finalFileFormData.append(files[i].name,files[i]);
+                        if(validateFile(files[i].name,files[i].size)){
+                            formData.append("uploadFile",files[i]);
+                        }
                     }
 
                     $.ajax({
@@ -893,8 +907,6 @@
                         data : formData,
                         type:'POST',
                         success: function(data) {
-                            console.log("성공")
-                            console.log(data)
                             console.log($inputFile.parent().siblings().find('ul'))
                              // let $uploadDiv = $(".uploadDiv");
                              // let $cloneObj =  $uploadDiv.clone();
@@ -923,21 +935,9 @@
                             })
                             // 업로드 div 초기화 > 이거하면 추가첨부가 안됨. 왜안되는지 알아보고 수정하자.
                             // $uploadDiv.html($cloneObj.html());
-                            // let attachedList = new FormData();
-                            // finalFileFormData.forEach(each => {
-                            //    attachedList.append("uploadFile",each)
-                            // })
-                            //
-                            // console.log("=====================확인!")
-                            // attachedList.forEach(each => {
-                            //     console.log(each)
-                            // })
                         }
                     })
                 })
-
             }) // end of onready
-        </script>
+   </script>
 </body>
-
-</html>

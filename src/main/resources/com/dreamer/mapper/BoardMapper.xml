@@ -51,8 +51,8 @@
 		<include refid="search"></include>
 	</select>
 
-	<select id="authCheck" resultType="int">
-		select IF(password = #{password},t1.bno,0) from tbl_board t1 where bno = #{bno}
+	<select id="authCheck" resultType="string">
+		select password from tbl_board where bno = #{bno}
 	</select>
 
 	<update id="updateBoard">

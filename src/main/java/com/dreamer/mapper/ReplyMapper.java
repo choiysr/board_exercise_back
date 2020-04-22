@@ -23,7 +23,7 @@ public interface ReplyMapper {
 	public ReplyVO selectOneByRno(Integer rno);
 	
 	// 비밀번호 체크
-	public Integer authCheck(AuthCheck enteredInfo);
+	public String authCheck(AuthCheck enteredInfo);
 
 
 }

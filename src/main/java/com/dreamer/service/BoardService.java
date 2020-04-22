@@ -14,12 +14,10 @@ public interface BoardService {
 	public void write(BoardVO board);
 	public List<BoardVO> getBoardList(Criteria pageInfo);
 	public Integer countAllBoards(Criteria pageInfo);
-	public Integer authCheck(AuthCheck enteredInfo);
+	public String authCheck(AuthCheck enteredInfo);
 	public void update(BoardVO board);
 	public void delete(Integer bno);
 	public String getOriginalFileName(String wholeFileName);
 
-
-	
 
 }

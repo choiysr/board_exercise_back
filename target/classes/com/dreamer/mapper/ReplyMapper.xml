@@ -21,8 +21,8 @@
 		values(#{writer},#{password},#{content},#{boardno});
 	</insert>
 
-	<select id="authCheck" resultType="int">
-		select IF(password = #{password},t1.rno,0) from tbl_reply t1 where rno = #{rno}
+	<select id="authCheck" resultType="string">
+		select password from tbl_reply where rno = #{rno}
 	</select>
 	
 	<delete id="deleteReply">

@@ -77,7 +77,7 @@ public class BoardMapperTests extends LoadingTests {
 
 	@Test
 	public void authCheckTest() {
-		log.info(bmapper.authCheck(AuthCheck.builder().bno(215).password("125454534").build()));
+//		log.info(bmapper.authCheck(AuthCheck.builder().bno(215).password("125454534").build()));
 
 	}
 
@@ -151,5 +151,7 @@ public class BoardMapperTests extends LoadingTests {
 		String result = amapper.getOriginalFileName("8336a6f9-c6ca-4029-a4fc-7b36a6bd28d3222.pdf");
 		log.info(result);
 	}
+	
+	
 
 }

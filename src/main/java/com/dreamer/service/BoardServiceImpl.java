@@ -53,7 +53,7 @@ public class BoardServiceImpl implements BoardService {
 	}
 
 	@Override
-	public Integer authCheck(AuthCheck enteredInfo) {
+	public String authCheck(AuthCheck enteredInfo) {
 		return boardMapper.authCheck(enteredInfo);
 	}
 

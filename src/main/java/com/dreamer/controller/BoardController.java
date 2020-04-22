@@ -39,6 +39,7 @@ import com.dreamer.domain.PageDTO;
 import com.dreamer.domain.ReplyVO;
 import com.dreamer.service.BoardService;
 import com.dreamer.service.ReplyService;
+import com.dreamer.util.EncodingPassword;
 import com.dreamer.util.FileUtil;
 import com.dreamer.util.ResponseMsg;
 import com.dreamer.util.StatusEnum;
@@ -74,10 +75,12 @@ public class BoardController {
 	// Validation 검사
 	@PostMapping(value = "/board")
 	public ResponseEntity<ResponseMsg> registerBoard(@RequestBody @Valid BoardVO board, BindingResult validationInfo) {
+		log.info(board);
 		ResponseEntity<ResponseMsg> response;
 		if (validationInfo.hasErrors()) {
 			response = validationCheck(validationInfo);
 		} else {
+			board.setPassword(EncodingPassword.encrypt(board.getPassword()));
 			boardService.write(board);
 			response = new ResponseEntity<>(new ResponseMsg(StatusEnum.SUCCESS, "성공"), CREATED);
 		}
@@ -123,6 +126,7 @@ public class BoardController {
 		if (validationInfo.hasErrors()) {
 			response = validationCheck(validationInfo);
 		} else {
+			reply.setPassword(EncodingPassword.encrypt(reply.getPassword()));
 			replyService.write(reply);
 			response = new ResponseEntity<>(new ResponseMsg(StatusEnum.SUCCESS, "성공"), CREATED);
 		}
@@ -162,11 +166,16 @@ public class BoardController {
 	public ResponseEntity<ResponseMsg> checkPassword(@RequestBody AuthCheck enteredInfo) {
 		boolean check;
 		ResponseEntity<ResponseMsg> response;
-		if (enteredInfo.getType().equals("board")) {
-			check = boardService.authCheck(enteredInfo).equals(enteredInfo.getBno());
+		String hashed;
+		String entered = enteredInfo.getPassword();	
+		if(enteredInfo.getType().equals("board")) {
+			hashed = boardService.authCheck(enteredInfo);		
+			check = EncodingPassword.isMatch(entered, hashed);
 		} else {
-			check = replyService.authCheck(enteredInfo).equals(enteredInfo.getRno());
-		}
+			hashed = replyService.authCheck(enteredInfo);		
+			check = EncodingPassword.isMatch(entered, hashed);
+		}	
+
 		response = check ? 
 				new ResponseEntity<>(new ResponseMsg(StatusEnum.SUCCESS, "성공"), OK)
 				: new ResponseEntity<>(new ResponseMsg(StatusEnum.FAIL, "비밀번호가 틀립니다. 다시 입력해주세요"), UNAUTHORIZED);
@@ -176,7 +185,6 @@ public class BoardController {
 	// 파일 업로드
 	@PostMapping(value = "/saveFile")
 	public ResponseEntity<List<Map<String,String>>> uploadFile(MultipartFile[] uploadFile) {
-		log.info("in saveFile CONTROLLER=======");
 		return new ResponseEntity<>(FileUtil.saveFile(uploadFile),OK);
 	}
 	
@@ -199,12 +207,8 @@ public class BoardController {
 	
 	@GetMapping(value= "/download", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
 	public ResponseEntity<Resource> download(@RequestParam String wholeFileName) {
-		log.info("DOWNLOAD!!!!!!!!!!!");
-		log.info(wholeFileName);
 		String fileNameFixed = wholeFileName.substring(wholeFileName.lastIndexOf("/")+1, wholeFileName.length());
-		log.info(fileNameFixed);
 		Resource resource = new FileSystemResource("c:\\upload\\"+wholeFileName);
-		log.info(boardService.getOriginalFileName(fileNameFixed));
 		String resourceName = boardService.getOriginalFileName(fileNameFixed);
 		HttpHeaders headers = new HttpHeaders();
 		try {
@@ -212,7 +216,6 @@ public class BoardController {
 		} catch(UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-		log.info("RESOURCE : "+resource);
 		return new ResponseEntity<>(resource, headers, OK);
 	}
 

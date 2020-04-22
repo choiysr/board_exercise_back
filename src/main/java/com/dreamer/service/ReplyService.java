@@ -14,6 +14,6 @@ public interface ReplyService {
 	public void update(ReplyVO reply);
 	public void delete(Integer rno);
 	public ReplyVO read(Integer rno);
-	public Integer authCheck(AuthCheck enteredInfo);
+	public String authCheck(AuthCheck enteredInfo);
 
 }

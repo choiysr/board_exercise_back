@@ -36,7 +36,7 @@ public class ReplyServiceImpl implements ReplyService{
 
 
 	@Override
-	public Integer authCheck(AuthCheck enteredInfo) {
+	public String authCheck(AuthCheck enteredInfo) {
 		return replyMapper.authCheck(enteredInfo);
 	}
 
