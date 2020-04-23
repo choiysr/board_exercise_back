@@ -20,6 +20,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,6 +38,7 @@ import com.dreamer.domain.BoardVO;
 import com.dreamer.domain.Criteria;
 import com.dreamer.domain.PageDTO;
 import com.dreamer.domain.ReplyVO;
+import com.dreamer.domain.Sort;
 import com.dreamer.service.BoardService;
 import com.dreamer.service.ReplyService;
 import com.dreamer.util.EncodingPassword;
@@ -63,8 +65,12 @@ public class BoardController {
 	public ResponseEntity<PageDTO<BoardVO>> getAllList(@RequestParam("pageRequest") Integer pageRequest,
 			@RequestParam("amount") Integer amount,
 			@RequestParam(value = "searchOption", defaultValue = "") String searchOption,
-			@RequestParam(value = "keyword", defaultValue = "") String keyword) {
-		Criteria pageCri = new Criteria(pageRequest, amount, searchOption, keyword);
+			@RequestParam(value = "keyword", defaultValue = "") String keyword,
+			@RequestParam(value = "sortBy", defaultValue = "bno") String sortBy,
+			@RequestParam(value = "order", defaultValue = "false") boolean order) {
+		log.info(sortBy);
+		log.info(order);
+		Criteria pageCri = new Criteria(pageRequest, amount, searchOption, keyword, new Sort(sortBy,order));
 		int total = boardService.countAllBoards(pageCri);
 		List<BoardVO> boardList = boardService.getBoardList(pageCri);
 		PageDTO<BoardVO> page = new PageDTO<>(pageCri, total, boardList);
@@ -112,6 +118,26 @@ public class BoardController {
 		boardService.delete(bno);
 		return new ResponseEntity<>(new ResponseMsg(StatusEnum.SUCCESS, "성공"), OK);
 	}
+	
+	// 다음 게시글 번호 
+	@GetMapping(value = "board/nextBno/{bno}")
+	public ResponseEntity<Integer> getNextBno(@PathVariable Integer bno) {
+		Integer result = boardService.getNextBoard(bno);
+		if(result==null) {
+			result = 0;
+		}
+		return new ResponseEntity<>(result, OK);
+	}
+	
+	// 이전 게시글 번호 
+	@GetMapping(value = "board/prevBno/{bno}")
+	public ResponseEntity<Integer> getPrevBno(@PathVariable Integer bno) {
+		Integer result = boardService.getPrevBoard(bno);
+		if(result==null) {
+			result = 0;
+		}
+		return new ResponseEntity<>(result, OK);
+	}
 
 	// 댓글 리스트 가져오기
 	@GetMapping(value = "/reply/{bno}")
@@ -132,7 +158,7 @@ public class BoardController {
 		}
 		return response;
 	}
-	
+
 	// 댓글 수정
 	@PutMapping(value = "/reply")
 	public ResponseEntity<ResponseMsg> updateReply(@RequestBody @Valid ReplyVO reply, BindingResult validationInfo) {
@@ -145,14 +171,13 @@ public class BoardController {
 		}
 		return response;
 	}
-	
-	// 댓글 수정을 위한 댓글 가져오기 
+
+	// 댓글 수정을 위한 댓글 가져오기
 	// 댓글 가져오기
 	@GetMapping(value = "/reply/forUpdate/{rno}")
 	public ResponseEntity<ReplyVO> getOneReply(@PathVariable Integer rno) {
 		return new ResponseEntity<>(replyService.read(rno), OK);
 	}
-	
 
 	// 댓글 삭제
 	@DeleteMapping(value = "/reply/{rno}")
@@ -167,64 +192,67 @@ public class BoardController {
 		boolean check;
 		ResponseEntity<ResponseMsg> response;
 		String hashed;
-		String entered = enteredInfo.getPassword();	
-		if(enteredInfo.getType().equals("board")) {
-			hashed = boardService.authCheck(enteredInfo);		
+		String entered = enteredInfo.getPassword();
+		if (enteredInfo.getType().equals("board")) {
+			hashed = boardService.authCheck(enteredInfo);
 			check = EncodingPassword.isMatch(entered, hashed);
 		} else {
-			hashed = replyService.authCheck(enteredInfo);		
+			hashed = replyService.authCheck(enteredInfo);
 			check = EncodingPassword.isMatch(entered, hashed);
-		}	
+		}
 
-		response = check ? 
-				new ResponseEntity<>(new ResponseMsg(StatusEnum.SUCCESS, "성공"), OK)
+		response = check ? new ResponseEntity<>(new ResponseMsg(StatusEnum.SUCCESS, "성공"), OK)
 				: new ResponseEntity<>(new ResponseMsg(StatusEnum.FAIL, "비밀번호가 틀립니다. 다시 입력해주세요"), UNAUTHORIZED);
 		return response;
 	}
-	
+
 	// 파일 업로드
 	@PostMapping(value = "/saveFile")
-	public ResponseEntity<List<Map<String,String>>> uploadFile(MultipartFile[] uploadFile) {
-		return new ResponseEntity<>(FileUtil.saveFile(uploadFile),OK);
+	public ResponseEntity<List<Map<String, String>>> uploadFile(MultipartFile[] uploadFile) {
+		return new ResponseEntity<>(FileUtil.saveFile(uploadFile), OK);
 	}
-	
+
 	// 파일 display(이미지 파일 경로를 받고 해당 이미지를 return)
 	@GetMapping(value = "/display")
 	public ResponseEntity<byte[]> displayImage(@RequestParam String fileName) {
 		log.info("DISPLAY");
 		log.info(fileName);
-		File file = new File("C:\\upload\\"+fileName);
+		File file = new File("C:\\upload\\" + fileName);
 		ResponseEntity<byte[]> result = null;
 		try {
 			HttpHeaders header = new HttpHeaders();
 			header.add("Content-Type", Files.probeContentType(file.toPath()));
-			result = new ResponseEntity<>(FileCopyUtils.copyToByteArray(file),header,OK);
-		} catch(Exception e) {
+			result = new ResponseEntity<>(FileCopyUtils.copyToByteArray(file), header, OK);
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return result;
 	}
-	
-	@GetMapping(value= "/download", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+
+	@GetMapping(value = "/download", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
 	public ResponseEntity<Resource> download(@RequestParam String wholeFileName) {
-		String fileNameFixed = wholeFileName.substring(wholeFileName.lastIndexOf("/")+1, wholeFileName.length());
-		Resource resource = new FileSystemResource("c:\\upload\\"+wholeFileName);
+		String fileNameFixed = wholeFileName.substring(wholeFileName.lastIndexOf("/") + 1, wholeFileName.length());
+		Resource resource = new FileSystemResource("c:\\upload\\" + wholeFileName);
 		String resourceName = boardService.getOriginalFileName(fileNameFixed);
 		HttpHeaders headers = new HttpHeaders();
 		try {
-			headers.add("Content-Disposition", "attachment; filename=" + new String(resourceName.getBytes("UTF-8"), "ISO-8859-1"));
-		} catch(UnsupportedEncodingException e) {
+			headers.add("Content-Disposition",
+					"attachment; filename=" + new String(resourceName.getBytes("UTF-8"), "ISO-8859-1"));
+		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
 		return new ResponseEntity<>(resource, headers, OK);
 	}
 
-
 	// 유효성 검사(게시글 등록, 수정시 사용)
 	public ResponseEntity<ResponseMsg> validationCheck(BindingResult validationInfo) {
-		String errorMessage = validationInfo.getAllErrors().get(0).toString();
-		errorMessage = errorMessage.substring(errorMessage.lastIndexOf("message") + 9, errorMessage.length())
-				.replace("]", "").trim();
+		String eachError = "";
+		String errorMessage = "";
+		List<ObjectError> errorList = validationInfo.getAllErrors();
+		for (ObjectError each : errorList) {			
+			eachError = each.toString();
+			errorMessage += (eachError.substring(eachError.lastIndexOf("message") + 9, eachError.length()).replace("]", "").trim())+"\n";
+		}
 		log.info(errorMessage);
 		return new ResponseEntity<>(new ResponseMsg(StatusEnum.FAIL, errorMessage), UNPROCESSABLE_ENTITY);
 	}

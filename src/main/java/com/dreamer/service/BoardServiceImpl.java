@@ -78,4 +78,14 @@ public class BoardServiceImpl implements BoardService {
 		return attachmentMapper.getOriginalFileName(wholeFileName);
 	}
 
+	@Override
+	public Integer getPrevBoard(Integer bno) {
+		return boardMapper.getPrevBoard(bno);
+	}
+
+	@Override
+	public Integer getNextBoard(Integer bno) {
+		return boardMapper.getNextBoard(bno);
+	}
+
 }

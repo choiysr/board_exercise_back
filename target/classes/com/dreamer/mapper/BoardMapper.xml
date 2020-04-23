@@ -16,14 +16,19 @@
 	</sql>
 
 	<select id="selectAllBoard" resultType="com.dreamer.domain.BoardVO">
-		select bt.*, ifnull(rt.rcount,0) as rcount 
-		from tbl_board as bt
-		left join (select boardno, count(rno) as rcount 
-		from tbl_reply group by boardno) as rt
+		select bt.*, ifnull(rt.rcount,0) as rcount, ifnull(att.atcount,0) as atcount 
+		from tbl_board as bt left join (select boardno, count(rno) as rcount from tbl_reply group by boardno) as rt
 		on rt.boardno = bt.bno
+		left join (select boardno, count(ano) as atcount from tbl_attachment group by boardno) as att
+		on att.boardno = bt.bno
 		where bno > 0
 		<include refid="search"></include>
-		order by bt.bno desc
+		<if test='sort.sortBy == "bno"'> order by bt.bno</if>
+		<if test='sort.sortBy == "title"'> order by bt.title</if>
+		<if test='sort.sortBy == "views"'> order by bt.views</if>
+		<if test='sort.sortBy == "date"'> order by bt.updateddate</if>
+		<if test='sort.order == "ASC"'>asc</if>
+		<if test='sort.order == "DESC"'>desc</if>
 		limit #{pageRequest}, #{amount}
 	</select>
 	
@@ -62,8 +67,14 @@
 	<delete id="deleteBoard">
 		delete from tbl_board where bno = #{bno}
 	</delete>
-
-
+	
+	<select id="getNextBoard" resultType="int">
+		select bno from tbl_board where bno = (select min(bno) from tbl_board where bno > #{bno})
+	</select>
+	
+	<select id="getPrevBoard" resultType="int">
+	 <![CDATA[select bno from tbl_board where bno = (select max(bno) from tbl_board where bno < #{bno})]]>	
+	</select>
 
 </mapper>
 

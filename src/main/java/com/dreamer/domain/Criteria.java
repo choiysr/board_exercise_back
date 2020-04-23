@@ -9,17 +9,19 @@ public class Criteria {
 	private Integer amount;
 	private String searchOption;
 	private String keyword;
+	private Sort sort;
 
 	public Criteria() {
-		this(1, 10, "", "");
+		this(1, 10, "", "", new Sort("bno",false));
 	}
 
 	
-	public Criteria(Integer currentPage, Integer amount, String searchOption, String keyword) {
-		this.pageRequest = (currentPage-1)*10;
+	public Criteria(Integer currentPage, Integer amount, String searchOption, String keyword, Sort sort) {
+		this.pageRequest = (currentPage-1)*amount;
 		this.amount = amount;
 		this.searchOption = searchOption;
 		this.keyword = keyword;
+		this.sort = sort;
 	}
 	
 	public String[] getCategory() {

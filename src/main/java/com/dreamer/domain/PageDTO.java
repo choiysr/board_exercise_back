@@ -19,8 +19,8 @@ public class PageDTO<T extends Pageable> {
 		this.total = total;
 		this.list = list;
 
-		int realPage = (criteria.getPageRequest() / 10) + 1;
-		this.endPage = (int) (Math.ceil(realPage / 10.0) * 10);
+		int realPage = (criteria.getPageRequest() / criteria.getAmount()) + 1;
+		this.endPage = (int) (Math.ceil(realPage / new Double(criteria.getAmount())) * 10);
 		this.startPage = endPage - 9;
 
 		int realEndPage = (int) Math.ceil((total / (double)criteria.getAmount()));

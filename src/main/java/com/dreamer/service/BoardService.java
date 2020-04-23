@@ -18,6 +18,8 @@ public interface BoardService {
 	public void update(BoardVO board);
 	public void delete(Integer bno);
 	public String getOriginalFileName(String wholeFileName);
+	public Integer getPrevBoard(Integer bno);
+	public Integer getNextBoard(Integer bno);
 
 
 }

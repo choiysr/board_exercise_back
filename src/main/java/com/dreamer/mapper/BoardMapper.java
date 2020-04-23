@@ -31,7 +31,13 @@ public interface BoardMapper {
 	public void updateBoard(BoardVO board);
 	
 	// 게시글 삭제
-	public void deleteBoard(Integer bno);		
+	public void deleteBoard(Integer bno);
+	
+	// 이전 게시글 번호
+	public Integer getPrevBoard(Integer bno);
+	
+	// 다음 게시글 번호
+	public Integer getNextBoard(Integer bno);
 
 
 }

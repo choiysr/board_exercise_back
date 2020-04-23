@@ -5,10 +5,10 @@ import java.util.List;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.dreamer.domain.AuthCheck;
 import com.dreamer.domain.BoardVO;
 import com.dreamer.domain.Criteria;
 import com.dreamer.domain.ReplyVO;
+import com.dreamer.domain.Sort;
 import com.dreamer.loading.LoadingTests;
 
 import lombok.Setter;
@@ -44,9 +44,9 @@ public class BoardMapperTests extends LoadingTests {
 	@Test
 	public void insertDummies() {
 //		log.info("=====insert dummy datas=====");
-//		IntStream.range(104, 120).forEach(i -> {
-//			bmapper.insertBoard(BoardVO.builder().writer("writer" + i).content("content" + i).password("pw")
-//					.title("타이틀" + i).build());
+//		IntStream.range(0, 100).forEach(i -> {
+//			bmapper.insertBoard(BoardVO.builder().writer("작성자" + i +"zz").content("content" + i + "zdsfjaheur").password("1234")
+//					.title("HI THERE! " + i).build());
 //		});
 	}
 
@@ -57,10 +57,10 @@ public class BoardMapperTests extends LoadingTests {
 	}
 
 	@Test
-	public void countAllBoardTest() {
+	public void selectAllWithSort() {
 		log.info("===================MapperTest : countAllBoardTest===");
-		Criteria cri3 = new Criteria(1, 10, "TCW", "z");
-		log.info(bmapper.countAllBoards(cri3));
+		Criteria cri3 = new Criteria(1, 10, "", "", new Sort("views",false));
+		log.info(bmapper.selectAllBoard(cri3));
 	}
 
 	@Test
@@ -110,18 +110,14 @@ public class BoardMapperTests extends LoadingTests {
 //		
 //		
 		
-		log.info("===========================");
-		Criteria cri3 = new Criteria(1, 5, "CW", "z");
-		List<BoardVO> list3 = bmapper.selectAllBoard(cri3);
-		list3.forEach(board -> {
-			log.info(board);
-		});
+
+//
 	}
 	
 	
 	@Test
 	public void replyCountTest() {
-		Criteria cri3 = new Criteria(1, 10, "", "");
+		//Criteria cri3 = new Criteria(1, 10, "", "");
 		//List<BoardVO> list3 = bmapper.allTest(cri3);
 //		list3.forEach(board -> {
 //			log.info(board);
