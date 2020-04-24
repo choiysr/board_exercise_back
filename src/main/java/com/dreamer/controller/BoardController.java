@@ -1,13 +1,10 @@
 package com.dreamer.controller;
 
-import static org.springframework.http.HttpStatus.CREATED;
-import static org.springframework.http.HttpStatus.OK;
-import static org.springframework.http.HttpStatus.UNAUTHORIZED;
-import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
-
+import static org.springframework.http.HttpStatus.*;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +21,7 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -60,22 +58,16 @@ public class BoardController {
 	private final ReplyService replyService;
 
 	// 게시글 리스트 불러오기
-	// @modelattribute로 테스트해보기.
 	@GetMapping(value = "/list")
-	public ResponseEntity<PageDTO<BoardVO>> getAllList(@RequestParam("pageRequest") Integer pageRequest,
-			@RequestParam("amount") Integer amount,
-			@RequestParam(value = "searchOption", defaultValue = "") String searchOption,
-			@RequestParam(value = "keyword", defaultValue = "") String keyword,
-			@RequestParam(value = "sortBy", defaultValue = "bno") String sortBy,
-			@RequestParam(value = "order", defaultValue = "false") boolean order) {
-		log.info(sortBy);
-		log.info(order);
-		Criteria pageCri = new Criteria(pageRequest, amount, searchOption, keyword, new Sort(sortBy,order));
+	public ResponseEntity<PageDTO<BoardVO>> getAllList(@ModelAttribute Criteria pageInfoObj) {
+		log.info(pageInfoObj);
+		Criteria pageCri = pageInfoObj;
 		int total = boardService.countAllBoards(pageCri);
 		List<BoardVO> boardList = boardService.getBoardList(pageCri);
 		PageDTO<BoardVO> page = new PageDTO<>(pageCri, total, boardList);
 		return new ResponseEntity<>(page, OK);
 	}
+	
 
 	// 게시글 등록
 	// Validation 검사
@@ -119,25 +111,18 @@ public class BoardController {
 		return new ResponseEntity<>(new ResponseMsg(StatusEnum.SUCCESS, "성공"), OK);
 	}
 	
-	// 다음 게시글 번호 
-	@GetMapping(value = "board/nextBno/{bno}")
-	public ResponseEntity<Integer> getNextBno(@PathVariable Integer bno) {
-		Integer result = boardService.getNextBoard(bno);
-		if(result==null) {
-			result = 0;
-		}
-		return new ResponseEntity<>(result, OK);
-	}
+	// 전,후 게시글 번호 
+	@GetMapping(value = "board/moveto")
+	   public ResponseEntity<Integer> getPrevBno(
+			   @RequestParam(value = "bno") Integer bno, @RequestParam(value = "direction")String direction) {
+		Map<String,Object> moving = new HashMap<>();
+		moving.put("bno", bno);
+		moving.put("direction", direction);
+	    Integer result = boardService.moveTo(moving);
+	    if(result==null) result = 0;
+	    return new ResponseEntity<>(result, OK);
+	   }
 	
-	// 이전 게시글 번호 
-	@GetMapping(value = "board/prevBno/{bno}")
-	public ResponseEntity<Integer> getPrevBno(@PathVariable Integer bno) {
-		Integer result = boardService.getPrevBoard(bno);
-		if(result==null) {
-			result = 0;
-		}
-		return new ResponseEntity<>(result, OK);
-	}
 
 	// 댓글 리스트 가져오기
 	@GetMapping(value = "/reply/{bno}")

@@ -1,11 +1,11 @@
 package com.dreamer.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.dreamer.domain.AuthCheck;
 import com.dreamer.domain.BoardVO;
 import com.dreamer.domain.Criteria;
-import com.dreamer.domain.ReplyVO;
 
 
 public interface BoardService {
@@ -18,8 +18,7 @@ public interface BoardService {
 	public void update(BoardVO board);
 	public void delete(Integer bno);
 	public String getOriginalFileName(String wholeFileName);
-	public Integer getPrevBoard(Integer bno);
-	public Integer getNextBoard(Integer bno);
+	public Integer moveTo(Map<String,Object> moving);
 
 
 }

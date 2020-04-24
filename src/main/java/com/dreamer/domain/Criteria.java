@@ -12,7 +12,7 @@ public class Criteria {
 	private Sort sort;
 
 	public Criteria() {
-		this(1, 10, "", "", new Sort("bno",false));
+		this(1, 10, "", "", new Sort("bno","DESC"));
 	}
 
 	

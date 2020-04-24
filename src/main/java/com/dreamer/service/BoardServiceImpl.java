@@ -1,6 +1,7 @@
 package com.dreamer.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +29,7 @@ public class BoardServiceImpl implements BoardService {
 		boardMapper.increaseViews(bno);
 		BoardVO board = boardMapper.selectOneByBno(bno);
 		board.setAttachedList(attachmentMapper.selectAttachmentsByBno(bno));
+//		BoardVO board = boardMapper.selectTest(bno);
 		return board;
 	}
 
@@ -79,13 +81,10 @@ public class BoardServiceImpl implements BoardService {
 	}
 
 	@Override
-	public Integer getPrevBoard(Integer bno) {
-		return boardMapper.getPrevBoard(bno);
+	public Integer moveTo(Map<String, Object> moving) {
+		return boardMapper.moveTo(moving);
 	}
-
-	@Override
-	public Integer getNextBoard(Integer bno) {
-		return boardMapper.getNextBoard(bno);
-	}
+	
+	
 
 }

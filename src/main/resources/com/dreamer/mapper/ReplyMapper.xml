@@ -4,6 +4,15 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.dreamer.mapper.ReplyMapper">
+
+<!-- 	<resultMap id="replyMap" type="com.dreamer.domain.ReplyVO">
+		<result property = "rno" column="rno"/>
+		<result property = "boardno" column="boardno"/>
+		<result property = "writer" column="writer"/>
+		<result property = "content" column="content"/>
+		<result property = "regdate" column="regdate"/>
+		<result property = "updateddate" column="updateddate"/>
+	</resultMap> -->
 	
 	<select id="selectAllReply" resultType="com.dreamer.domain.ReplyVO">
 		select * from tbl_reply
@@ -32,6 +41,7 @@
 	<update id="updateReply">
 		update tbl_reply set content = #{content} where rno = #{rno}
 	</update>
+	
 
 </mapper>
 

@@ -1,6 +1,8 @@
 package com.dreamer.mapper;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.IntStream;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,11 +45,11 @@ public class BoardMapperTests extends LoadingTests {
 
 	@Test
 	public void insertDummies() {
-//		log.info("=====insert dummy datas=====");
-//		IntStream.range(0, 100).forEach(i -> {
-//			bmapper.insertBoard(BoardVO.builder().writer("작성자" + i +"zz").content("content" + i + "zdsfjaheur").password("1234")
-//					.title("HI THERE! " + i).build());
-//		});
+		log.info("=====insert dummy datas=====");
+		IntStream.range(0, 100).forEach(i -> {
+			bmapper.insertBoard(BoardVO.builder().writer("작성자" + i +"zz").content("content" + i + "zdsfjaheur").password("1234")
+					.title("HI THERE! " + i).build());
+		});
 	}
 
 	@Test
@@ -59,8 +61,8 @@ public class BoardMapperTests extends LoadingTests {
 	@Test
 	public void selectAllWithSort() {
 		log.info("===================MapperTest : countAllBoardTest===");
-		Criteria cri3 = new Criteria(1, 10, "", "", new Sort("views",false));
-		log.info(bmapper.selectAllBoard(cri3));
+//		Criteria cri3 = new Criteria(1, 10, "", "", new Sort("views",false));
+//		log.info(bmapper.selectAllBoard(cri3));
 	}
 
 	@Test
@@ -146,6 +148,23 @@ public class BoardMapperTests extends LoadingTests {
 	public void getOriginalFileNameTest() {
 		String result = amapper.getOriginalFileName("8336a6f9-c6ca-4029-a4fc-7b36a6bd28d3222.pdf");
 		log.info(result);
+	}
+	
+	@Test
+	public void moveToOtherBoardNo() {
+		Map<String,Object> moving = new HashMap<> ();
+		moving.put("bno", 515);
+		moving.put("direction", "prev");
+		log.info(bmapper.moveTo(moving));
+	}
+	
+	@Test
+	public void selectOneBoardTesetWithAnotherQuery() {
+		
+		BoardVO test = bmapper.selectTest(619);
+		log.info(test);
+		
+		
 	}
 	
 	

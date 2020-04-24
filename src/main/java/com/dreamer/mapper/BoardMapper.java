@@ -1,11 +1,11 @@
 package com.dreamer.mapper;
 
 import java.util.List;
+import java.util.Map;
 
 import com.dreamer.domain.AuthCheck;
 import com.dreamer.domain.BoardVO;
 import com.dreamer.domain.Criteria;
-import com.dreamer.domain.ReplyVO;
 
 public interface BoardMapper {
 	
@@ -32,12 +32,11 @@ public interface BoardMapper {
 	
 	// 게시글 삭제
 	public void deleteBoard(Integer bno);
+
+	// 전,후 게시글 번호
+	public Integer moveTo(Map<String,Object> moving);
 	
-	// 이전 게시글 번호
-	public Integer getPrevBoard(Integer bno);
-	
-	// 다음 게시글 번호
-	public Integer getNextBoard(Integer bno);
+	public BoardVO selectTest(Integer bno);
 
 
 }

@@ -182,10 +182,19 @@
 			<version>3.9</version>
 		</dependency>
 
+		<!-- for encoding password -->
 		<dependency>
 			<groupId>org.mindrot</groupId>
 			<artifactId>jbcrypt</artifactId>
 			<version>0.3m</version>
+		</dependency>
+
+
+		<!-- sql insection safe -->
+		<dependency>
+			<groupId>com.github.rkpunjal.sqlsafe</groupId>
+			<artifactId>sql-injection-safe</artifactId>
+			<version>1.0.2</version>
 		</dependency>
 
 

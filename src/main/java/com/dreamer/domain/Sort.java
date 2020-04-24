@@ -1,20 +1,30 @@
 package com.dreamer.domain;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.ToString;
 
-@Data
+@Getter
+@ToString
 public class Sort {
 	
-	private String sortBy, order;
+	private String sortBy;
+	private String order;
 	
-	
-	public Sort() {
-		this("bno",false);
+	public Sort(String sortBy, String order) {
+		this.sortBy = sortBy;
+		this.order = order;
+	}	
+
+
+	public void setOrder(String order) {
+		this.order = order.equals("true") ? "ASC" : "DESC";
 	}
 	
-	public Sort(String sortBy, boolean order) {
-		this.sortBy = sortBy;
+	public void setOrder(boolean order) {
 		this.order = order ? "ASC" : "DESC";
 	}
+	
+
+
 
 }

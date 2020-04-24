@@ -5,6 +5,15 @@
 
 <mapper namespace="com.dreamer.mapper.AttachmentMapper">
 
+<!-- 	<resultMap id="attachMap" type="com.dreamer.domain.AttachmentVO">
+		<result property ="ano" column="ano"/>
+		<result property = "path" column="path"/>
+		<result property = "uuid" column="uuid"/>
+		<result property = "name" column="name"/>
+		<result property = "boardno" column="boardno"/>
+		<result property = "image" column="image"/>
+	</resultMap> -->
+
 	<insert id="insertAttachments">
 		insert into tbl_attachment(path,uuid,name,image,boardno)
 		values(#{path},#{uuid},#{name},#{image},#{boardno})
