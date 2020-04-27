@@ -20,11 +20,11 @@
 	</insert>
 	
 	<select id="getCurrentBno" resultType="int">
-		select last_insert_id();
+		select last_insert_id()
 	</select>
 	
 	<select id="selectAttachmentsByBno" resultType="com.dreamer.domain.AttachmentVO">
-		select * from tbl_attachment where boardno = #{boardno};
+		select * from tbl_attachment where boardno = #{boardno}
 	</select>
 	
 	<delete id="deleteAttachments">
@@ -32,7 +32,7 @@
 	</delete>
 	
 	<select id="getOriginalFileName" resultType="string">
-		select t1.name from tbl_attachment as t1 where concat(t1.uuid,t1.name) = #{wholeFileName};
+		select t1.name from tbl_attachment as t1 where concat(t1.uuid,t1.name) = #{wholeFileName}
 	</select>
 
 </mapper>

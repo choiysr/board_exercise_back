@@ -13,13 +13,13 @@ import com.dreamer.mapper.AttachmentMapper;
 import com.dreamer.mapper.BoardMapper;
 
 import lombok.RequiredArgsConstructor;
-
-
+import lombok.extern.log4j.Log4j;
 
 @RequiredArgsConstructor
 @Service
+@Log4j
 public class BoardServiceImpl implements BoardService {
-	
+
 	private final BoardMapper boardMapper;
 	private final AttachmentMapper attachmentMapper;
 
@@ -46,6 +46,15 @@ public class BoardServiceImpl implements BoardService {
 
 	@Override
 	public List<BoardVO> getBoardList(Criteria pageInfo) {
+		String sortBy = pageInfo.getSort().getSortBy();
+		String order = pageInfo.getSort().getOrder();
+		if (!(sortBy.equalsIgnoreCase("title") || sortBy.equalsIgnoreCase("regdate") || sortBy.equalsIgnoreCase("views")
+				|| sortBy.equalsIgnoreCase("bno"))) {
+			pageInfo.getSort().setSortBy("bno");
+		}
+		if (!(order.equalsIgnoreCase("asc") || order.equalsIgnoreCase("desc"))) {
+			pageInfo.getSort().setOrder("desc");
+		}		
 		return boardMapper.selectAllBoard(pageInfo);
 	}
 
@@ -84,7 +93,5 @@ public class BoardServiceImpl implements BoardService {
 	public Integer moveTo(Map<String, Object> moving) {
 		return boardMapper.moveTo(moving);
 	}
-	
-	
 
 }

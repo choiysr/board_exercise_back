@@ -60,14 +60,13 @@ public class BoardController {
 	// 게시글 리스트 불러오기
 	@GetMapping(value = "/list")
 	public ResponseEntity<PageDTO<BoardVO>> getAllList(@ModelAttribute Criteria pageInfoObj) {
-		log.info(pageInfoObj);
-		Criteria pageCri = pageInfoObj;
+		Criteria pageCri = new Criteria(pageInfoObj.getPageRequest(), pageInfoObj.getAmount(), pageInfoObj.getSearchOption(), pageInfoObj.getKeyword(), pageInfoObj.getSort());
 		int total = boardService.countAllBoards(pageCri);
 		List<BoardVO> boardList = boardService.getBoardList(pageCri);
 		PageDTO<BoardVO> page = new PageDTO<>(pageCri, total, boardList);
 		return new ResponseEntity<>(page, OK);
 	}
-	
+	 
 
 	// 게시글 등록
 	// Validation 검사

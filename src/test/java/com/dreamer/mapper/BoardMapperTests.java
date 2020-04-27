@@ -1,6 +1,7 @@
 package com.dreamer.mapper;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
 
@@ -12,6 +13,7 @@ import com.dreamer.domain.Criteria;
 import com.dreamer.domain.ReplyVO;
 import com.dreamer.domain.Sort;
 import com.dreamer.loading.LoadingTests;
+import com.dreamer.service.BoardService;
 
 import lombok.Setter;
 import lombok.extern.log4j.Log4j;
@@ -158,12 +160,23 @@ public class BoardMapperTests extends LoadingTests {
 		log.info(bmapper.moveTo(moving));
 	}
 	
+	@Setter(onMethod_ = {@Autowired})
+	private BoardService bs;
+	
 	@Test
 	public void selectOneBoardTesetWithAnotherQuery() {
+		Criteria pageCri = new Criteria(1, 10,"","",new Sort("bno","desc"));
+		List<BoardVO> boardList = bmapper.selectAllBoard(pageCri);
+		boardList.forEach(item -> {
+			log.info(item);
+		});
 		
-		BoardVO test = bmapper.selectTest(619);
-		log.info(test);
+		log.info("----");
 		
+		List<BoardVO> boardList2 = bs.getBoardList(pageCri);
+		boardList2.forEach(item -> {
+			log.info(item);
+		});
 		
 	}
 	
