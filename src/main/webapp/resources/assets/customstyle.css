@@ -1,0 +1,93 @@
+.ns {
+    font-family: 'Noto Sans KR', sans-serif;
+}
+
+.customBtnArea {
+    text-align: right;
+}
+
+.eachBoard, .replyModi, .replyDel {
+    cursor: pointer;
+}
+
+.eachBoard:hover {
+    color: black;
+    font-weight: bold;
+}
+
+.readModalArea {
+    width: 100%;
+}
+
+.left {
+    width: 50%;
+    float: left;
+    box-sizing: border-box;
+}
+
+.right {
+    width: 50%;
+    float: right;
+    box-sizing: border-box;
+}
+
+.custom-modal-css {
+    width: 100vw;
+}
+
+#reaplyListArea{
+    width: 382.4px; height:384px;
+    overflow: auto;
+}
+
+#replyTable {
+    width: 100%;
+    border-spacing: 1px;
+    border-collapse: separate;
+    font-size: small;
+}
+
+.replyWriterTD {
+    text-align: center;
+    width: 91px;
+    font-weight: bold;
+}
+
+.replyDateTD {
+    font-size: xx-small;
+	width: 10%;'
+}
+
+.replyContentTD {
+    text-align: left;
+    align-content : left;
+    align-item : left;
+	width: 40%;
+}
+
+.replyContentDIV {
+	text-align: left;
+    align-content : left;
+    align-item : left;
+}
+
+.replyButtonTD {
+    text-align: center;
+}
+
+.replyReplyTD {
+    text-align: center;
+    width: 40px
+}
+
+#regiModal-attachedFileListUl, #readModal-attachedFileListUl{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+#regiModal-attachedFileListUl li, #readModal-attachedFileListUl li {
+    margin: 0 0 0 0;
+    padding: 0 0 0 0;
+    border : 0;
+    float: left;
+}

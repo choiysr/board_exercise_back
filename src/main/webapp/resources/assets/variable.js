@@ -14,6 +14,7 @@ var item = function () {
     let $readWriter = $("#readModal-writer");
     let $readPassword = $("#passwordArea");
     let $readPasswordInput = $("#readModal-password");
+    let $selectedAmount = $("#selectedAmount");
 
     let $eachBoard = $(".eachBoard");
 
@@ -51,6 +52,7 @@ var item = function () {
         $readWriter,
         $readPassword,
         $readPasswordInput,
+        $selectedAmount,
         $eachBoard,
         $readBoardModal,
         $modiBtnInReadModal,

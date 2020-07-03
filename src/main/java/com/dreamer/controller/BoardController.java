@@ -1,6 +1,10 @@
 package com.dreamer.controller;
 
-import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
+
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
@@ -36,7 +40,6 @@ import com.dreamer.domain.BoardVO;
 import com.dreamer.domain.Criteria;
 import com.dreamer.domain.PageDTO;
 import com.dreamer.domain.ReplyVO;
-import com.dreamer.domain.Sort;
 import com.dreamer.service.BoardService;
 import com.dreamer.service.ReplyService;
 import com.dreamer.util.EncodingPassword;
@@ -51,7 +54,7 @@ import lombok.extern.log4j.Log4j;
 @RequestMapping("/*")
 @RequiredArgsConstructor
 @Log4j
-@CrossOrigin
+@CrossOrigin(origins = "*")
 public class BoardController {
 
 	private final BoardService boardService;
@@ -112,15 +115,15 @@ public class BoardController {
 	
 	// 전,후 게시글 번호 
 	@GetMapping(value = "board/moveto")
-	   public ResponseEntity<Integer> getPrevBno(
+	public ResponseEntity<Integer> getPrevBno(
 			   @RequestParam(value = "bno") Integer bno, @RequestParam(value = "direction")String direction) {
 		Map<String,Object> moving = new HashMap<>();
 		moving.put("bno", bno);
 		moving.put("direction", direction);
-	    Integer result = boardService.moveTo(moving);
-	    if(result==null) result = 0;
-	    return new ResponseEntity<>(result, OK);
-	   }
+		Integer result = boardService.moveTo(moving);
+		if(result==null) result = 0;
+		return new ResponseEntity<>(result, OK);
+	} 
 	
 
 	// 댓글 리스트 가져오기
